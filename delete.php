@@ -4,7 +4,6 @@ include("connections.php");
 // get all the data from specified user id
 @$user_id = $_REQUEST['current_id'];
 
-
 $sql = "SELECT * FROM mytbl WHERE id='$user_id'";
 $delete_query = mysqli_query($connection, $sql);
 
@@ -14,7 +13,6 @@ while($row_delete = mysqli_fetch_assoc($delete_query)) {
     $db_name = $row_delete["name"];
     $db_email = $row_delete["email"];
     $db_address = $row_delete["address"];
-
 }
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {

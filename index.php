@@ -64,6 +64,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="submit" value="submit">
     </form>
     <hr>
+    <a href="index.php"><button>Home</button></a>
+    <a href="search.php"><button>Search</button></a>
+    <hr>
 <?php
 // to view data from the database
 $view_query = mysqli_query($connection, "SELECT * FROM mytbl");
@@ -84,8 +87,6 @@ $view_query = mysqli_query($connection, "SELECT * FROM mytbl");
         $db_email = $row['email'];
         $db_address = $row['address'];
 
-        
-
         echo "<tr>
         <td>$db_name</td>
         <td>$db_email</td>
@@ -98,6 +99,29 @@ $view_query = mysqli_query($connection, "SELECT * FROM mytbl");
     }
 
     echo "</table>";
+?>
+
+<hr>
+<?php
+
+// foreach example
+$name1 = "Joshua Mercado";
+$name2 = "Richard Dayrit";
+$name3 = "Aljon Valen";
+$name4 = "Ronnel Garino";
+$name5 = "Aeroll Tiosen";
+
+$name_list = array($name1, $name2, $name3, $name4, $name5); // create an array
+
+echo "<ul style='padding: 0; margin: 0;'>";
+
+foreach($name_list as $display_names) {
+
+    echo "<li style='border-bottom: solid thin; list-style: none;'>$display_names</li>";
+
+}
+
+echo "</ul>";
 ?>
 </body>
 </html>
