@@ -1,8 +1,8 @@
 <?php
 include("connections.php"); // isama lahat ng code ng ibang page sa current page
 
-$name = $email = $address = ""; // mga variables na hahawak sa mga na-input sa textbox 
-$nameErr = $emailErr = $addressErr = ""; // mga variables na hahawak ng mga error sa textbox
+$name = $email = $address = $password = $check_password = ""; // mga variables na hahawak sa mga na-input sa textbox 
+$nameErr = $emailErr = $addressErr =   $passwordErr = $check_passwordErr = ""; // mga variables na hahawak ng mga error sa textbox
 
 if($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -16,35 +16,60 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if(empty($_POST["name"])) {
-        $nameErr = "Name is required!";
+        $nameErr = " * Name is required!";
     } else {
         $name = testInput($_POST["name"]);
     }
 
     if(empty($_POST["email"])) {
-        $emailErr = "Email is required!";
+        $emailErr = " * Email is required!";
     } else {
         $email = testInput($_POST["email"]);
     }
 
     if(empty($_POST["address"])) {
-        $addressErr = "Address is required!";
+        $addressErr = " * Address is required!";
     } else {
         $address = testInput($_POST["address"]);
     }
 
+    if(empty($_POST["password"])) {
+        $passwordErr = " * Password is required!";
+    } else {
+        $password = testInput($_POST["password"]);
+    }
+
+    if(empty($_POST["check_password"])) {
+        $check_passwordErr = " * Type your password again!";
+    } else {
+        $check_password = testInput($_POST["check_password"]);
+    }
+
     // if all values are not empty
-    if($name && $email && $address) {
+    if($name && $email && $address && $password && $check_password) {
 
-        // handles the query to be sent to the database
-        $insert_query = mysqli_query($connection, "INSERT INTO mytbl(id, name, address, email) VALUES('', '$name', '$address', '$email')");
 
-        if($insert_query) {
-            echo "<script type='text/javascript'>alert('New Record has been inserted');</script>";
-            echo "<script type='text/javascript'>window.location.href='index.php'</script>";
-        }else {
-            echo "something went wrong";
+        // i che check nya kung may nag eexist na katulad na email sa database
+        $check_email_query = mysqli_query($connection, "SELECT * FROM mytbl WHERE email='$email'");
+        $count_email_rows = mysqli_num_rows($check_email_query);
+
+        if($count_email_rows > 0) {
+            $emailErr = " * Email is already registered!";
         }
+        else {
+            // handles the query to be sent to the database
+            $insert_query = mysqli_query($connection, "INSERT INTO mytbl(id, name, address, email, password, account_type) VALUES('', '$name', '$address', '$email', '$check_password', '2')");
+
+            if($insert_query) {
+                echo "<script type='text/javascript'>alert('New Record has been inserted');</script>";
+                echo "<script type='text/javascript'>window.location.href='index.php'</script>";
+            }
+            else {
+                echo "something went wrong";
+            }
+
+        }
+       
     }
 }
 ?>
@@ -55,17 +80,26 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>FirstProject</title>
+    <style>
+    .error-msg {
+        font-style: italic;
+        color: red;
+    }
+    </style>
 </head>
 <body>
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>">
-        <div><input type="text" name="name" placeholder="name" value="<?php echo $name; ?>"><span><?php echo $nameErr; ?></span></div>
-        <div><input type="text" name="address" placeholder="address" value="<?php echo $address; ?>"><span><?php echo $addressErr; ?></span></div>
-        <div><input type="text" name="email" placeholder="email" value="<?php echo $email; ?>"><span><?php echo $emailErr; ?></span></div>
+        <div><label for="">Name: </label><input type="text" name="name" placeholder="name" value="<?php echo $name; ?>"><span class="error-msg"><?php echo $nameErr; ?></span></div>
+        <div><label for="">Address: </label><input type="text" name="address" placeholder="address" value="<?php echo $address; ?>"><span class="error-msg"><?php echo $addressErr; ?></span></div>
+        <div><label for="">Email: </label><input type="text" name="email" placeholder="email" value="<?php echo $email; ?>"><span class="error-msg"><?php echo $emailErr; ?></span></div>
+        <div><label for="">Password: </label><input type="password" name="password" placeholder="password" value="<?php echo $password; ?>"><span class="error-msg"><?php echo $passwordErr; ?></span></div>
+        <div><label for="">Confirm Password: </label><input type="password" name="check_password" placeholder="confirm password" value="<?php echo $check_password; ?>"><span class="error-msg"><?php echo $check_passwordErr; ?></span></div>
         <input type="submit" value="submit">
     </form>
     <hr>
-    <a href="index.php"><button>Home</button></a>
-    <a href="search.php"><button>Search</button></a>
+<?php
+include("nav.php");
+?>
     <hr>
 <?php
 // to view data from the database
