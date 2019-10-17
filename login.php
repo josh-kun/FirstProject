@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("connections.php");
 
 $email = $password = "";
@@ -30,11 +31,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
             while($row = mysqli_fetch_assoc($check_email_query)) {
 
+                $db_id = $row["id"];
                 $db_password = $row["password"];
                 $db_account_type = $row["account_type"];
                 
                 // pag ang password ay kaparehas ng sa database
                 if($password == $db_password) {
+
+                    $_SESSION["id"] = $db_id; // variable para sa ibang page na gagamitan ng session
 
                     if($db_account_type == "1") {
 
@@ -54,7 +58,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
          else {
             $emailErr =  " * Email is not registered!";
          }
-
     }
 }
 ?>
